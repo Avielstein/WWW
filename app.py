@@ -61,15 +61,61 @@ html = """
     Find more info 
     <a href=https://posh.vip/e/gen-ws-ladys-poker-night>Here</a>
     """
+
+#construct the pop up if we want one, this allows
+#us to customize what the popup looks like
+def custom_html(title="Default", disc=None, link_name='more info', link=None):
+    html = ''
+    html+='<h1>'+title+'</h1><br>'
+    if disc:
+        html+=disc
+    if link:
+        html+='<a '+link+' > '+link_name+'</a>'
+    return html
+    
+
 folium.Marker(
     [30.2672, -97.7431], 
-    popup=html, 
+).add_to(m)
+
+
+bar1_html = custom_html('San Jac', 'fun event', 'Here','https://posh.vip/e/gen-ws-ladys-poker-night')
+
+
+folium.Marker(
+    [30.2706, -97.7287], 
+    popup=bar1_html, 
     tooltip="Bar",
     lazy=True
 ).add_to(m)
 
-# call to render Folium map in Streamlit
-st_data = st_folium(m, width=725)
+
+
+
+def get_pos():
+    try:
+        return [displayedMap['last_clicked']['lat'],displayedMap['last_clicked']['lng']]
+    except:
+        return None
+
+
+m.add_child(folium.LatLngPopup())
+
+displayedMap = st_folium(m)
+
+left, right = st.columns(2)
+with left:
+    st.write("## Tooltip")
+    st.write(displayedMap["last_object_clicked_tooltip"])
+with right:
+    st.write("## Popup")
+    st.write(displayedMap["last_object_clicked_popup"])
+
+
+
+
+if get_pos():
+    st.write(get_pos())
 
 
 
